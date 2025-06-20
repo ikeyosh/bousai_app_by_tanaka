@@ -122,42 +122,21 @@ def get_warning_codes():
 def get_fujisawa_warnings():
     """藤沢市の警報・注意報を取得する"""
     try:
-        # 神奈川県の警報・注意報データを取得
-        warning_info = urllib.request.urlopen(url=WARNING_URL, timeout=10)
-        warning_data = json.loads(warning_info.read())
-        
-        # 警報・注意報コードマップを取得
-        warning_codes = get_warning_codes()
-        
-        # 発表時刻を取得        
-        report_datetime = warning_data.get("reportDatetime", "")
-        if report_datetime:
-            try:
-                """ # 第2問：条件分岐について学ぼう！
-                # 以下のコードの〇〇の中に、A~Dの中から適切なものを選んで貼り付けてください
-                # A) elif
-                # B) else
-                # C) if
-                # D) while
-                # ヒント：「もし〜なら」を指す言葉。
-                # ISO形式の時刻をパース（例: "2025-01-15T04:14:00+09:00"）
-                if report_datetime.endswith('Z'):
-                    # UTC時刻の場合は+9時間してJSTに変換
-                    utc_time = datetime.fromisoformat(report_datetime[:-1])
-                    jst_time = utc_time + timedelta(hours=9)
-                elif '+09:00' in report_datetime:
-                    # 既にJST（+09:00）が含まれている場合はタイムゾーン部分を除去してパース
-                    jst_time = datetime.fromisoformat(report_datetime.replace('+09:00', ''))
-                else:
-                    # その他の形式はそのままパース
-                    jst_time = datetime.fromisoformat(report_datetime)
-                """ # 第2問：条件分岐
-                
-                formatted_time = jst_time.strftime("%Y年%m月%d日 %H:%M")
-            except Exception as e:
-                formatted_time = report_datetime
-        else:
-            formatted_time = "不明"
+        """ 
+        # 第1問：神奈川県の警報・注意報データを取得するための変数を準備しよう！
+
+        【利用する変数とその説明】
+        warning_info: 神奈川県の警報・注意報データ。読み込むURLはWARNING_URL、タイムアウトは10msである。
+        warning_data: 神奈川県の警報・注意報データ(warning_info)をJSON形式で読み込んだもの
+        warning_codes: 警報・注意報コードマップ
+        report_datetime: 発表時刻
+
+        【条件】
+        warning_info: urllib.request.urlopenを利用する。
+        warning_data: warning_infoをJSON形式で読み込む。
+        warning_codes: get_warning_codes()関数を利用する。
+        report_datetime: warning_data.getを用いて発表時刻を取得。参照パラメータはreportDatetimeである。表示フォーマットは「YYYY年MM月DD日 HH:mm」である。また、発表時刻が存在しない場合は「不明」と表示する。
+        """
         
         if "areaTypes" not in warning_data:
             return None
@@ -227,8 +206,11 @@ def get_fujisawa_warnings():
 @app.route('/')
 def index():
     # 気象警報・注意報を取得
-    weather_warnings = get_fujisawa_warnings()
-    return render_template('index.html', weather_warnings=weather_warnings)
+    """
+    # 第1問：神奈川県の警報・注意報データを取得しよう！
+    get_fujisawa_warnings()関数を呼び出し、その結果をindex.htmlテンプレートに渡す。
+    """
+    return render_template('index.html')
 
 # ログインページ
 @app.route('/login', methods=['GET', 'POST'])

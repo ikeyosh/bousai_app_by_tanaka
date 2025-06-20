@@ -79,14 +79,11 @@
             </div>
           {% endif %}
           <div class="weather-info-footer">
-            <div class="update-time-item">
-              <i class="far fa-clock"></i>
-              <span>最終確認: <span id="lastFetchTime">{{ weather_warnings.last_fetch_time if weather_warnings.last_fetch_time else '読み込み中...' }}</span></span>
-            </div>
-            <div class="update-time-item">
-              <i class="fas fa-satellite-dish"></i>
-              <span>気象庁最終発表: {{ weather_warnings.report_time }}</span>
-            </div>
+            <!-- 第1問：気象警報・注意報の取得結果を表示しよう！
+              weather-info-footerの中に、以下の内容を追加してください。
+              最終確認(last_fetch_time)と気象庁最終発表(report_time)の2つの項目を追加してください。
+              表示イメージはスライドを参照してください。
+            -->
           </div>
         </div>
       {% else %}
