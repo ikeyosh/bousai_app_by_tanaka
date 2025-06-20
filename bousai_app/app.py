@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 FUJISAWA_DISTRICTS = [
     "片瀬地区", "鵠沼地区", "辻堂地区", "村岡地区", "藤沢地区",
     "明治地区", "善行地区", "湘南大庭地区", "六会地区", "湘南台地区",
-    "遠藤地区", "長後地区", "御所見地区"
+    "遠藤地区", "長後地区", "御所見地区",
 ]
 
 app = Flask(__name__)
