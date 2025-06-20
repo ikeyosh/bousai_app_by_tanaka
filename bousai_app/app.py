@@ -159,52 +159,42 @@ def get_fujisawa_warnings():
         else:
             formatted_time = "不明"
         
-        # 藤沢市のデータを検索
-        if "areaTypes" in warning_data: 
-                       
-            for area_type in warning_data["areaTypes"]: 
-                if "areas" in area_type:                    
-                    for area in area_type["areas"]: 
-                        if area.get("code") == FUJISAWA_AREA_CODE:
-                            # 藤沢市の警報・注意報を取得
-                            warnings = "___LIST_WARNINGS___" # [] <- リスト初期化をプレースホルダーに
-                            if isinstance(warnings, str): # プレースホルダーの場合のフォールバック
-                                warnings = []
-                            
-                            for warning in area.get("warnings", []):
-                                status = warning.get("status", "")
-                                if status in ["発表", "継続"]:
-                                    code = warning.get("code", "")
-                                    # name = warning_codes._____(code, f"不明な警報・注意報 (コード: {code})") # get <- メソッド呼び出しを一部コメントアウト
-                                    name = warning_codes.get(code, f"不明な警報・注意報 (コード: {code})") # 修正案: .get を追加しておくか、学習者に .get を追記させる指示
-                                    warnings.append({
-                                        "name": name,
-                                        "code": code,
-                                        "status": status
-                                    })
-                                                        
-                            result = {
-                                "area_name": area.get("name", "藤沢市"),
-                                "warnings": warnings,
-                                "report_time": formatted_time,
-                                "last_fetch_time": get_japan_time()
-                            }
-                            
-                            # 履歴に保存
-                            save_warning_history(result)
-                            return result
-            
-        # 藤沢市のデータが見つからない場合
-        result = {
-            "area_name": "藤沢市",
-            "warnings": [],
-            "report_time": formatted_time,
-            "last_fetch_time": get_japan_time()
-        }
-        
-        # 履歴に保存
-        save_warning_history(result)
-        return result
+        if "areaTypes" not in warning_data:
+            return None
+
+        for area_type in warning_data["areaTypes"]:
+            if "areas" not in area_type:
+                continue
+
+            for area in area_type["areas"]:
+                if area.get("code") != FUJISAWA_AREA_CODE:
+                    continue
+
+                # 藤沢市の警報・注意報を取得
+                warnings = []
+                for warning in area.get("warnings", []):
+                    status = warning.get("status", "")
+                    if status not in ["発表", "継続"]:
+                        continue
+
+                    code = warning.get("code", "")
+                    name = warning_codes.get(code, f"不明な警報・注意報 (コード: {code})")
+                    warnings.append({
+                        "name": name,
+                        "code": code,
+                        "status": status
+                    })
+
+                result = {
+                    "area_name": area.get("name", "藤沢市"),
+                    "warnings": warnings,
+                    "report_time": formatted_time,
+                    "last_fetch_time": get_japan_time()
+                }
+
+                # 履歴に保存
+                save_warning_history(result)
+                return result
         
     except urllib.error.URLError as e:
         return {
