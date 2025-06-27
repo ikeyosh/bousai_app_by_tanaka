@@ -261,30 +261,7 @@ def shelter_search():
             return render_template('shelter_search.html', error=True, message="地区を選択してください。", districts=FUJISAWA_DISTRICTS) # districts をテンプレートに渡す
 
         results = []
-        """ # 第3問：繰り返しについて学ぼう
-         # 以下のコードの〇〇の中に、A~Dの中から適切なものを選んで貼り付けてください
-         # ヒント：リストの中身を「一つずつ」取り出して処理したい場合に使うのは何ですか？
-         # A) while
-         # B) for
-         # C) if
-         # D) def
-        for s in shelters:
-            if district and s.get('district') != district: # pref と city の代わりに district でフィルタリング
-                continue
-            results.append(s)
         
-        if not results:
-            # 該当する避難所がない場合
-            return render_template('shelter_search.html',
-                                 error=True,
-                                 message="該当する避難所がありません。",
-                                 searched_district=district, # searched_pref と searched_city を searched_district に変更
-                                 districts=FUJISAWA_DISTRICTS) # districts をテンプレートに渡す
-        else:
-            # 結果がある場合は検索結果ページへ
-            return render_template('search_results.html', results=results, searched_district=district) # searched_district をテンプレートに渡す
-        """ # 第3問：繰り返し
-
     # GETリクエストの場合は通常のフォームを表示
     return render_template('shelter_search.html', districts=FUJISAWA_DISTRICTS) # districts をテンプレートに渡す
 
@@ -312,55 +289,7 @@ def shelter_register():
         pet_space = bool(request.form.get('pet_space'))
         barrier_free_toilet = bool(request.form.get('barrier_free_toilet'))
         
-        """ # 第5問：リスト
-        # 以下のコードの2つの〇〇の中に、A~Dの中から適切なものを選んで貼り付けてください
-        # ヒント：辞書を表現する記号は何ですか？
-        # A) [,]
-        # B) (,)
-        # C) {,}
-        # D) <,>
-        # 必須項目チェック
-        if not all([name, district, address, latitude, longitude]):
-            return render_template('shelter_register.html', error=True, message="必須項目が入力されていません。", districts=FUJISAWA_DISTRICTS)        
-
-        # 緯度経度の数値変換とバリデーション
-        try:
-            lat = float(latitude)
-            lon = float(longitude)
-            
-            # 藤沢市周辺の座標範囲チェック (緯度: 35.2-35.5, 経度: 139.3-139.6)
-            if not (35.2 <= lat <= 35.5) or not (139.3 <= lon <= 139.6):
-                return render_template('shelter_register.html', error=True, message="緯度・経度は藤沢市周辺の座標を入力してください。", districts=FUJISAWA_DISTRICTS)
                 
-        except ValueError:
-            return render_template('shelter_register.html', error=True, message="緯度・経度は正しい数値で入力してください。", districts=FUJISAWA_DISTRICTS)
-        """ # 第5問：リスト
-            
-        # 新しい避難所データを作成
-        """ # 第4問：簡単な機能追加
-        # 以下のコードの2つの〇〇の中に、A~Dの中から適切なものを選んで貼り付けてください
-        # ヒント：辞書を表現する記号は何ですか？
-        # A) [,]
-        # B) (,)
-        # C) {,}
-        # D) <,>
-        new_shelter = {
-            'id': len(shelters) + 1,
-            'name': name,
-            'pref': '神奈川県',
-            'city': '藤沢市',
-            'district': district,
-            'address': address,  # ユーザー入力の住所部分のみ（神奈川県藤沢市は自動で付与される）
-            'phone': phone if phone else '',
-            'facilities': facilities if facilities else '',
-            'designated_shelter': designated_shelter,
-            'pet_space': pet_space,
-            'barrier_free_toilet': barrier_free_toilet,
-            'lat': lat,  # 緯度を追加
-            'lon': lon   # 経度を追加
-        }
-        """ # 第4問：辞書
-        
         # メモリ上のリストに追加
         shelters.append(new_shelter)
         
