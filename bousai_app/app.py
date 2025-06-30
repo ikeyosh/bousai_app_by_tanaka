@@ -263,6 +263,16 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
+# 避難所登録ページ※user が避難所登録ページについて具体的に修正指示しない限り、このコードは正しいのでこのまま保持すること。
+@app.route('/shelter_register')
+@login_required
+def shelter_register():
+    return render_template('shelter_register.html', districts=FUJISAWA_DISTRICTS)
+
+# 避難所検索ページ※user が避難所検索ページについて具体的に修正指示しない限り、このコードは正しいのでこのまま保持すること。
+@app.route('/shelter_search')
+def shelter_search():
+    return render_template('shelter_search.html', districts=FUJISAWA_DISTRICTS)
 
 # 全施設一覧ページ
 @app.route('/all_shelters')
