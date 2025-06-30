@@ -25,15 +25,7 @@ ADMIN_CREDENTIALS = {
 # ────────────────────────────────
 # 気象警報・注意報設定
 FUJISAWA_AREA_CODE = "1420500"  # 藤沢市のエリアコード
-""" # 第1問：変数について学ぼう！
-# 以下のコードの〇〇の中に、A~Dの中から適切なものを選んで貼り付けてください
-# ヒント： URLは文字として扱う必要があります。文字を変数に入れるときは何で囲みますか？
-# A) https://www.jma.go.jp/bosai/warning/data/warning/140000.json
-# B) "https://www.jma.go.jp/bosai/warning/data/warning/140000.json"
-# C) [https://www.jma.go.jp/bosai/warning/data/warning/140000.json]
-# D) {https://www.jma.go.jp/bosai/warning/data/warning/140000.json}
-WARNING_URL = "https://www.jma.go.jp/bosai/warning/data/warning/140000.json"
-""" # 第1問：変数
+WARNING_URL = https://www.jma.go.jp/bosai/warning/data/warning/140000.json
 
 # ────────────────────────────────
 # サンプルデータの読み込み
