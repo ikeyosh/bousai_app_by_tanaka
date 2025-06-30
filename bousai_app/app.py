@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 FUJISAWA_DISTRICTS = [
     "片瀬地区", "鵠沼地区", "辻堂地区", "村岡地区", "藤沢地区",
     "明治地区", "善行地区", "湘南大庭地区", "六会地区", "湘南台地区",
-    "遠藤地区", "長後地区", "御所見地区",
+    "遠藤地区", "長後地区", "御所見地区"
 ]
 
 app = Flask(__name__)
@@ -25,8 +25,9 @@ ADMIN_CREDENTIALS = {
 # ────────────────────────────────
 # 気象警報・注意報設定
 FUJISAWA_AREA_CODE = "1420500"  # 藤沢市のエリアコード
+"""
 WARNING_URL = https://www.jma.go.jp/bosai/warning/data/warning/140000.json
-
+"""
 # ────────────────────────────────
 # サンプルデータの読み込み
 DATA_FILE = os.path.join(os.path.dirname(__file__), 'data', 'shelters.json')
@@ -114,58 +115,81 @@ def get_warning_codes():
 def get_fujisawa_warnings():
     """藤沢市の警報・注意報を取得する"""
     try:
-        """ 
-        # 第1問：神奈川県の警報・注意報データを取得するための変数を準備しよう！
-
-        【利用する変数とその説明】
-        warning_info: 神奈川県の警報・注意報データ。読み込むURLはWARNING_URL、タイムアウトは10msである。
-        warning_data: 神奈川県の警報・注意報データ(warning_info)をJSON形式で読み込んだもの
-        warning_codes: 警報・注意報コードマップ
-        report_datetime: 発表時刻
-
-        【条件】
-        warning_info: urllib.request.urlopenを利用する。
-        warning_data: warning_infoをJSON形式で読み込む。
-        warning_codes: get_warning_codes()関数を利用する。
-        report_datetime: warning_data.getを用いて発表時刻を取得。参照パラメータはreportDatetimeである。表示フォーマットは「YYYY年MM月DD日 HH:mm」である。また、発表時刻が存在しない場合は「不明」と表示する。
-        """
+        # 神奈川県の警報・注意報データを取得
+        warning_info = urllib.request.urlopen(url=WARNING_URL, timeout=10)
+        warning_data = json.loads(warning_info.read())
         
-        if "areaTypes" not in warning_data:
-            return None
-
-        for area_type in warning_data["areaTypes"]:
-            if "areas" not in area_type:
-                continue
-
-            for area in area_type["areas"]:
-                if area.get("code") != FUJISAWA_AREA_CODE:
-                    continue
-
-                # 藤沢市の警報・注意報を取得
-                warnings = []
-                for warning in area.get("warnings", []):
-                    status = warning.get("status", "")
-                    if status not in ["発表", "継続"]:
-                        continue
-
-                    code = warning.get("code", "")
-                    name = warning_codes.get(code, f"不明な警報・注意報 (コード: {code})")
-                    warnings.append({
-                        "name": name,
-                        "code": code,
-                        "status": status
-                    })
-
-                result = {
-                    "area_name": area.get("name", "藤沢市"),
-                    "warnings": warnings,
-                    "report_time": formatted_time,
-                    "last_fetch_time": get_japan_time()
-                }
-
-                # 履歴に保存
-                save_warning_history(result)
-                return result
+        # 警報・注意報コードマップを取得
+        warning_codes = get_warning_codes()
+        
+        # 発表時刻を取得        
+        report_datetime = warning_data.get("reportDatetime", "")
+        if report_datetime:
+            try:               
+                # ISO形式の時刻をパース（例: "2025-01-15T04:14:00+09:00"）
+                if report_datetime.endswith('Z'):
+                    # UTC時刻の場合は+9時間してJSTに変換
+                    utc_time = datetime.fromisoformat(report_datetime[:-1])
+                    jst_time = utc_time + timedelta(hours=9)
+                elif '+09:00' in report_datetime:
+                    # 既にJST（+09:00）が含まれている場合はタイムゾーン部分を除去してパース
+                    jst_time = datetime.fromisoformat(report_datetime.replace('+09:00', ''))
+                else:
+                    # その他の形式はそのままパース
+                    jst_time = datetime.fromisoformat(report_datetime)
+                                
+                formatted_time = jst_time.strftime("%Y年%m月%d日 %H:%M")
+            except Exception as e:
+                formatted_time = report_datetime
+        else:
+            formatted_time = "不明"
+        
+        # 藤沢市のデータを検索
+        if "areaTypes" in warning_data: 
+                       
+            for area_type in warning_data["areaTypes"]: 
+                if "areas" in area_type:                    
+                    for area in area_type["areas"]: 
+                        if area.get("code") == FUJISAWA_AREA_CODE:
+                            # 藤沢市の警報・注意報を取得
+                            warnings = "___LIST_WARNINGS___" # [] <- リスト初期化をプレースホルダーに
+                            if isinstance(warnings, str): # プレースホルダーの場合のフォールバック
+                                warnings = []
+                            
+                            for warning in area.get("warnings", []):
+                                status = warning.get("status", "")
+                                if status in ["発表", "継続"]:
+                                    code = warning.get("code", "")
+                                    # name = warning_codes._____(code, f"不明な警報・注意報 (コード: {code})") # get <- メソッド呼び出しを一部コメントアウト
+                                    name = warning_codes.get(code, f"不明な警報・注意報 (コード: {code})") # 修正案: .get を追加しておくか、学習者に .get を追記させる指示
+                                    warnings.append({
+                                        "name": name,
+                                        "code": code,
+                                        "status": status
+                                    })
+                                                        
+                            result = {
+                                "area_name": area.get("name", "藤沢市"),
+                                "warnings": warnings,
+                                "report_time": formatted_time,
+                                "last_fetch_time": get_japan_time()
+                            }
+                            
+                            # 履歴に保存
+                            save_warning_history(result)
+                            return result
+            
+        # 藤沢市のデータが見つからない場合
+        result = {
+            "area_name": "藤沢市",
+            "warnings": [],
+            "report_time": formatted_time,
+            "last_fetch_time": get_japan_time()
+        }
+        
+        # 履歴に保存
+        save_warning_history(result)
+        return result
         
     except urllib.error.URLError as e:
         return {
@@ -198,11 +222,8 @@ def get_fujisawa_warnings():
 @app.route('/')
 def index():
     # 気象警報・注意報を取得
-    """
-    # 第1問：神奈川県の警報・注意報データを取得しよう！
-    get_fujisawa_warnings()関数を呼び出し、その結果をindex.htmlテンプレートに渡す。
-    """
-    return render_template('index.html')
+    weather_warnings = get_fujisawa_warnings()
+    return render_template('index.html', weather_warnings=weather_warnings)
 
 # ログインページ
 @app.route('/login', methods=['GET', 'POST'])
@@ -242,25 +263,12 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
-# 避難所検索ページ：templates/shelter_search.html を返す
-@app.route('/shelter_search', methods=['GET', 'POST'])
-def shelter_search():
-    if request.method == 'POST':
-        district = request.form.get('district', '').strip() # pref と city を district に変更
-
-        # 地区が未入力の場合はエラー
-        if not district:
-            return render_template('shelter_search.html', error=True, message="地区を選択してください。", districts=FUJISAWA_DISTRICTS) # districts をテンプレートに渡す
-
-        results = []
-        
-    # GETリクエストの場合は通常のフォームを表示
-    return render_template('shelter_search.html', districts=FUJISAWA_DISTRICTS) # districts をテンプレートに渡す
 
 # 全施設一覧ページ
 @app.route('/all_shelters')
 def all_shelters():
     return render_template('search_results.html', results=shelters)
+
 
 # 災害情報通知履歴ページ：templates/notification_history.html を返す
 @app.route('/notification_history')
