@@ -262,43 +262,6 @@ def shelter_search():
 def all_shelters():
     return render_template('search_results.html', results=shelters)
 
-# 避難所登録ページ：templates/shelter_register.html を返す（要認証）
-@app.route('/shelter_register', methods=['GET', 'POST'])
-@login_required
-def shelter_register():
-    if request.method == 'POST':
-        # フォームデータを取得
-        name = request.form.get('name', '').strip()
-        district = request.form.get('district', '').strip()
-        address = request.form.get('address', '').strip()
-        phone = request.form.get('phone', '').strip()
-        facilities = request.form.get('facilities', '').strip()
-        latitude = request.form.get('latitude', '').strip()
-        longitude = request.form.get('longitude', '').strip()
-        
-        # チェックボックスの値を取得
-        designated_shelter = bool(request.form.get('designated_shelter'))
-        pet_space = bool(request.form.get('pet_space'))
-        barrier_free_toilet = bool(request.form.get('barrier_free_toilet'))
-        
-                
-        # メモリ上のリストに追加
-        shelters.append(new_shelter)
-        
-        # JSONファイルにも保存
-        try:
-            with open(DATA_FILE, 'w', encoding='utf-8') as f:
-                json.dump(shelters, f, ensure_ascii=False, indent=2)
-            
-            # 成功メッセージと共にページを表示
-            return render_template('shelter_register.html', success=True, message="避難所が登録されました！", districts=FUJISAWA_DISTRICTS)
-        except Exception as e:
-            # エラーメッセージと共にページを表示
-            return render_template('shelter_register.html', error=True, message=f"登録中にエラーが発生しました: {str(e)}", districts=FUJISAWA_DISTRICTS)
-    
-    # GETリクエストの場合は通常のフォームを表示
-    return render_template('shelter_register.html', districts=FUJISAWA_DISTRICTS)
-
 # 災害情報通知履歴ページ：templates/notification_history.html を返す
 @app.route('/notification_history')
 def notification_history_page():
