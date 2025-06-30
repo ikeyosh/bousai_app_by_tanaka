@@ -533,18 +533,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
         }
-
-        // 第2問：気象警報・注意報の取得結果を表示しよう！
-        // weather-info-footerの中に、以下の内容を追加してください。
-        // データ取得(last_fetch_time)と気象庁発表(report_time)の2つの項目を追加してください。
-        // 表示イメージはスライドを参照してください。
-        weatherContent.innerHTML = `
+        
+        weatherContent.innerHTML = `Add commentMore actions
             <div class="weather-info">
                 <div class="weather-info-header">
                     <i class="fas fa-map-marker-alt"></i>
                     <span>${data.area_name || '藤沢市'}</span>
                 </div>
                 ${warningsHtml}
+                <div class="weather-info-footer">
+                    <div class="update-time-item">
+                        <i class="far fa-clock"></i>
+                        <span>データ取得: <span id="lastFetchTime">${data.last_fetch_time || '更新中...'}</span></span>
+                    </div>
+                    <div class="update-time-item">
+                        <i class="fas fa-satellite-dish"></i>
+                        <span>気象庁発表: ${data.report_time || '不明'}</span>
+                    </div>
+                </div>
             </div>
         `;
     }
