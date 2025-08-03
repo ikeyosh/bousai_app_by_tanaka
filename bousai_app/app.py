@@ -269,9 +269,23 @@ def logout():
 def shelter_register():
     return render_template('shelter_register.html', districts=FUJISAWA_DISTRICTS)
 
-# 避難所検索ページ※user が避難所検索ページについて具体的に修正指示しない限り、このコードは正しいのでこのまま保持すること。
-@app.route('/shelter_search')
+# 避難所検索ページ
+@app.route('/shelter_search', methods=['GET', 'POST'])
 def shelter_search():
+    if request.method == 'POST':
+        district = request.form.get('district')
+        
+        results = []
+        for s in shelters:
+            # 地区でフィルタリング
+            if district and s.get('district') != district:
+                continue
+            results.append(s)
+        
+        # 検索結果を search_results.html に渡す
+        return render_template('search_results.html', results=results)
+
+    # GETリクエストの場合は検索ページを表示
     return render_template('shelter_search.html', districts=FUJISAWA_DISTRICTS)
 
 # 全施設一覧ページ
