@@ -24,7 +24,7 @@ ADMIN_CREDENTIALS = {
 
 # ────────────────────────────────
 # 気象警報・注意報設定
-FUJISAWA_AREA_CODE = "1420500"  # 藤沢市のエリアコード
+FUJISAWA_AREA_CODE = "1330800"  # 藤沢市のエリアコード
 
 WARNING_URL = "https://www.jma.go.jp/bosai/warning/data/warning/140000.json"
 
